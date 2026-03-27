@@ -130,7 +130,7 @@ const dots = images.map((_, i) => {
 
 container.appendChild(dotsWrap);
 
-<!--/* Arrows */
+/* Arrows */
 const prevBtn = document.createElement("button");
 prevBtn.className = "prev";
 prevBtn.innerHTML = "❮";
@@ -145,7 +145,7 @@ container.appendChild(prevBtn);
 container.appendChild(nextBtn);
 
 prevBtn.addEventListener("click", () => goTo(current - 1));
-nextBtn.addEventListener("click", () => goTo(current + 1));-->
+nextBtn.addEventListener("click", () => goTo(current + 1));
 
 /* Core logic */
 function goTo(index) {
