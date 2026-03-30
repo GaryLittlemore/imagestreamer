@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RTFC Gary Littleemore</title>
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: black;
+}
+
+.slideshow {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+}
+
+.slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.slide.active { opacity: 1; }
+
+/* Dots */
+.dots {
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+    text-align: center;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    margin: 6px;
+    display: inline-block;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.5);
+    cursor: pointer;
+}
+
+.dot.active { background: white; }
+</style>
+</head>
+
+<body>
+
+<!-- AUDIO ELEMENT -->
+<audio id="bgAudio" src="./music/Ethan%20Yates%20-%20RTFC%20Gary%20Littlemore.mp3" preload="auto"></audio>
+
+<div class="slideshow" id="slideshow"></div>
+
+<script>
+const images = [
+    "./images/rtfc.jpg"
+];
+
+const container = document.getElementById("slideshow");
+let current = 0;
+const displayTime = 15000;
+let interval;
+
+/* AUDIO CONTROL */
+const audio = document.getElementById("bgAudio");
+
+function playAudio() {
+    audio.play().catch(() => {
+        // Autoplay blocked, wait for user interaction
+        document.addEventListener("click", () => {
+            audio.play();
+        }, { once: true });
+    });
+}
+
+/* Create slides */
+const slides = images.map((src, i) => {
+    const div = document.createElement("div");
+    div.className = "slide";
+
+    const img = document.createElement("img");
+    img.src = src;
+    img.alt = `Slide ${i + 1}`;
+    img.loading = "lazy";
+
+    div.appendChild(img);
+    container.appendChild(div);
+    return div;
+});
+
+/* Create dots */
+const dotsWrap = document.createElement("div");
+dotsWrap.className = "dots";
+
+const dots = images.map((_, i) => {
+    const dot = document.createElement("span");
+    dot.className = "dot";
+    dot.setAttribute("tabindex", "0");
+
+    dot.addEventListener("click", () => goTo(i));
+    dot.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") goTo(i);
+    });
+
+    dotsWrap.appendChild(dot);
+    return dot;
+});
+
+container.appendChild(dotsWrap);
+
+/* Core logic */
+function goTo(index) {
+    current = (index + slides.length) % slides.length;
+
+    slides.forEach((s, i) => s.classList.toggle("active", i === current));
+    dots.forEach((d, i) => d.classList.toggle("active", i === current));
+
+    resetInterval();
+}
+
+/* Auto-play */
+function startInterval() {
+    interval = setInterval(() => goTo(current + 1), displayTime);
+}
+
+function resetInterval() {
+    clearInterval(interval);
+    startInterval();
+}
+
+/* Pause on hover */
+container.addEventListener("mouseenter", () => clearInterval(interval));
+container.addEventListener("mouseleave", startInterval);
+
+/* Init */
+goTo(0);
+startInterval();
+playAudio(); // 🔊 start audio
+</script>
+
+</body>
+</html>
