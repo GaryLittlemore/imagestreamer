@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MP3 Button Player</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #111;
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .button-container {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
+        width: 80%;
+        max-width: 700px;
+    }
+
+    button {
+        width: 100%;
+        height: 60px;
+        font-size: 14px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        background: #212749;
+        color: white;
+        transition: 0.2s;
+        text-align: center;
+        padding: 5px;
+    }
+
+    button:hover {
+        background: #87cefa;
+    }
+
+    .stop-btn {
+        background: #dc3545;
+    }
+
+    .stop-btn:hover {
+        background: #b02a37;
+    }
+</style>
+</head>
+<body>
+
+<div class="button-container">
+    <button onclick="playAudio('audio1')">Gary Littlemore</button>
+    <button onclick="playAudio('audio2')">Ethan Yates</button>
+    <button onclick="playAudio('audio3')">Sound 3</button>
+    <button onclick="playAudio('audio4')">Sound 4</button>
+    <button onclick="playAudio('audio5')">Sound 5</button>
+    <button onclick="playAudio('audio6')">Sound 6</button>
+    <button onclick="playAudio('audio7')">Sound 7</button>
+    <button onclick="playAudio('audio8')">Sound 8</button>
+    <button onclick="playAudio('audio9')">Sound 9</button>
+    <button onclick="playAudio('audio10')">Sound 10</button>
+    <button onclick="playAudio('audio11')">Sound 11</button>
+    <button onclick="playAudio('audio12')">Sound 12</button>
+
+    <!-- Stop All Button -->
+    <button class="stop-btn" onclick="stopAllAudio()">STOP ALL</button>
+</div>
+
+<!-- Audio elements -->
+<audio id="audio1" src="./sound/audio1.mp3"></audio>
+<audio id="audio2" src="./sound/audio2.mp3"></audio>
+<audio id="audio3" src="./sound/audio1.mp3"></audio>
+<audio id="audio4" src="./sound/audio2.mp3"></audio>
+<audio id="audio5" src="./sound/audio1.mp3"></audio>
+<audio id="audio6" src="./sound/audio2.mp3"></audio>
+<audio id="audio7" src="./sound/audio1.mp3"></audio>
+<audio id="audio8" src="./sound/audio2.mp3"></audio>
+<audio id="audio9" src="./sound/audio1.mp3"></audio>
+<audio id="audio10" src="./sound/audio2.mp3"></audio>
+<audio id="audio11" src="./sound/audio1.mp3"></audio>
+<audio id="audio12" src="./sound/audio2.mp3"></audio>
+
+<script>
+function playAudio(audioId) {
+    stopAllAudio(); // Stop everything first
+    const selectedAudio = document.getElementById(audioId);
+    selectedAudio.play();
+}
+
+function stopAllAudio() {
+    const allAudio = document.querySelectorAll('audio');
+    allAudio.forEach(audio => {
+        audio.pause();
+        audio.currentTime = 0;
+    });
+}
+</script>
+
+</body>
+</html>
