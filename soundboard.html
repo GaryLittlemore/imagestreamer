@@ -99,18 +99,35 @@
 <audio id="audio16" src="./soundboard/fart.mp3"></audio>
 
 <script>
+let activeClones = [];
+
 function playAudio(audioId) {
-    stopAllAudio(); // Stop everything first
-    const selectedAudio = document.getElementById(audioId);
-    selectedAudio.play();
+    const originalAudio = document.getElementById(audioId);
+    const audioClone = originalAudio.cloneNode();
+
+    audioClone.play();
+    activeClones.push(audioClone);
+
+    audioClone.addEventListener("ended", () => {
+        audioClone.remove();
+        activeClones = activeClones.filter(a => a !== audioClone);
+    });
 }
 
 function stopAllAudio() {
-    const allAudio = document.querySelectorAll('audio');
-    allAudio.forEach(audio => {
+    // Stop original audios
+    document.querySelectorAll('audio').forEach(audio => {
         audio.pause();
         audio.currentTime = 0;
     });
+
+    // Stop cloned audios
+    activeClones.forEach(audio => {
+        audio.pause();
+        audio.remove();
+    });
+
+    activeClones = [];
 }
 </script>
 
