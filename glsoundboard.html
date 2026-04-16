@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="description" content="GL Soundboard">
+<meta name="keywords" content="Soundboard">
+<meta name="author" content="Gary Littlemore">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GL Soundboard</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #111;
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .button-container {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
+        width: 80%;
+        max-width: 700px;
+    }
+
+    button {
+        width: 100%;
+        height: 60px;
+        font-size: 14px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        background: #212749;
+        color: white;
+        transition: 0.2s;
+        text-align: center;
+        padding: 5px;
+    }
+
+    button:hover {
+        background: #87cefa;
+    }
+
+    .stop-btn {
+        background: #dc3545;
+    }
+
+    .stop-btn:hover {
+        background: #b02a37;
+    }
+</style>
+</head>
+<body>
+
+<div class="button-container">
+    <button onclick="playAudio('audio1')">Air Horn</button>
+    <button onclick="playAudio('audio2')">Button 2</button>
+    <button onclick="playAudio('audio3')">Button 3</button>
+    <button onclick="playAudio('audio4')">Button 4</button>
+    <button onclick="playAudio('audio5')">Button 5</button>
+    <button onclick="playAudio('audio6')">Button 6</button>
+    <button onclick="playAudio('audio7')">Button 7</button>
+    <button onclick="playAudio('audio8')">Button 8</button>
+    <button onclick="playAudio('audio9')">Button 9</button>
+    <button onclick="playAudio('audio10')">Button 10</button>
+    <button onclick="playAudio('audio11')">Button 11</button>
+    <button onclick="playAudio('audio12')">Button 12</button>
+    <button onclick="playAudio('audio13')">Button 13</button>
+    <button onclick="playAudio('audio14')">Button 14</button>
+    <button onclick="playAudio('audio15')">Button 15</button>
+    <button onclick="playAudio('audio16')">Button 16</button>
+
+    <!-- Stop All Button -->
+    <button class="stop-btn" onclick="stopAllAudio()">STOP ALL</button>
+</div>
+
+<!-- Audio elements -->
+<audio id="audio1" src="./soundboard/airhorn.mp3"></audio>
+<audio id="audio2" src="./soundboard/audio2.mp3"></audio>
+<audio id="audio3" src="./soundboard/audio3.mp3"></audio>
+<audio id="audio4" src="./soundboard/audio4.mp3"></audio>
+<audio id="audio5" src="./soundboard/audio5.mp3"></audio>
+<audio id="audio6" src="./soundboard/audio6.mp3"></audio>
+<audio id="audio7" src="./soundboard/audio7.mp3"></audio>
+<audio id="audio8" src="./soundboard/audio8.mp3"></audio>
+<audio id="audio9" src="./soundboard/audio9.mp3"></audio>
+<audio id="audio10" src="./soundboard/audio10.mp3"></audio>
+<audio id="audio11" src="./soundboard/audio11.mp3"></audio>
+<audio id="audio12" src="./soundboard/audio12.mp3"></audio>
+<audio id="audio13" src="./soundboard/audio13.mp3"></audio>
+<audio id="audio14" src="./soundboard/audio14.mp3"></audio>
+<audio id="audio15" src="./soundboard/audio15.mp3"></audio>
+<audio id="audio16" src="./soundboard/audio16.mp3"></audio>
+
+<script>
+let activeClones = [];
+
+function playAudio(audioId) {
+    const originalAudio = document.getElementById(audioId);
+    const audioClone = originalAudio.cloneNode();
+
+    audioClone.play();
+    activeClones.push(audioClone);
+
+    audioClone.addEventListener("ended", () => {
+        audioClone.remove();
+        activeClones = activeClones.filter(a => a !== audioClone);
+    });
+}
+
+function stopAllAudio() {
+    // Stop original audios
+    document.querySelectorAll('audio').forEach(audio => {
+        audio.pause();
+        audio.currentTime = 0;
+    });
+
+    // Stop cloned audios
+    activeClones.forEach(audio => {
+        audio.pause();
+        audio.remove();
+    });
+
+    activeClones = [];
+}
+</script>
+
+</body>
+</html>
