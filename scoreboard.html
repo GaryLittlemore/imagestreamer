@@ -3,107 +3,214 @@
 <head>
 <meta charset="UTF-8">
 <title>Football Scoreboard</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        background: #0b1f3a;
-        color: white;
-        text-align: center;
-        padding: 30px;
+body {
+    font-family: Arial, sans-serif;
+    background: #0b1f3a;
+    color: white;
+    text-align: center;
+    margin: 0;
+    padding: 15px;
+}
+
+.container {
+    max-width: 500px;
+    margin: auto;
+}
+
+h1 {
+    font-size: 24px;
+}
+
+.teams {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.team {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+input {
+    font-size: 18px;
+    padding: 5px;
+    width: 45%;
+    text-align: center;
+}
+
+.score {
+    font-size: 36px;
+    width: 50px;
+}
+
+.buttons {
+    margin: 15px 0;
+}
+
+button {
+    font-size: 18px;
+    padding: 12px;
+    margin: 5px;
+    width: 45%;
+    border: none;
+    border-radius: 8px;
+    background: #1e90ff;
+    color: white;
+}
+
+button:active {
+    background: #0f5ec7;
+}
+
+.timer {
+    font-size: 48px;
+    margin: 10px 0;
+}
+
+.half {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.controls button {
+    width: 48%;
+}
+
+.log {
+    margin-top: 20px;
+    text-align: left;
+    background: rgba(255,255,255,0.1);
+    padding: 10px;
+    border-radius: 10px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.log h3 {
+    margin-top: 0;
+}
+
+.log-entry {
+    font-size: 16px;
+    margin: 5px 0;
+}
+
+/* Desktop layout */
+@media(min-width: 600px) {
+    .teams {
+        flex-direction: row;
     }
 
-    .scoreboard {
-        font-size: 40px;
-        margin: 20px 0;
-    }
-
-    input {
-        font-size: 20px;
-        padding: 5px;
-        width: 200px;
-        text-align: center;
+    .team {
+        width: 48%;
     }
 
     button {
-        font-size: 18px;
-        margin: 5px;
-        padding: 10px 15px;
-        cursor: pointer;
+        width: auto;
     }
 
-    .timer {
-        font-size: 50px;
-        margin-top: 20px;
+    .controls button {
+        width: auto;
     }
+}
 </style>
 </head>
+
 <body>
 
-<h1>⚽ Football Scoreboard</h1>
+<div class="container">
 
-<div>
-    <input id="homeName" value="Home">
-    <span class="scoreboard" id="homeScore">0</span>
+<h1>⚽ Scoreboard</h1>
 
-    vs
+<div class="half" id="halfDisplay">1st Half</div>
 
-    <span class="scoreboard" id="awayScore">0</span>
-    <input id="awayName" value="Away">
+<div class="teams">
+    <div class="team">
+        <input id="homeName" value="Home">
+        <div class="score" id="homeScore">0</div>
+    </div>
+
+    <div class="team">
+        <input id="awayName" value="Away">
+        <div class="score" id="awayScore">0</div>
+    </div>
 </div>
 
-<div>
+<div class="buttons">
     <button onclick="addGoal('home')">Home Goal</button>
     <button onclick="addGoal('away')">Away Goal</button>
 </div>
 
 <div class="timer" id="timer">00:00</div>
 
-<div>
+<div class="controls">
     <button onclick="startTimer()">Start</button>
     <button onclick="stopTimer()">Stop</button>
-    <button onclick="resetTimer()">Reset</button>
-    <button onclick="secondHalf()">2nd Half</button>
+    <button onclick="resetMatch()">Reset</button>
+    <button onclick="startSecondHalf()">2nd Half</button>
+</div>
+
+<div style="margin-top: 10px;">
+    <input id="customEvent" placeholder="Enter match event..." style="width: 65%;">
+    <button onclick="addCustomEvent()" style="width: 30%;">Add</button>
+</div>
+
+<div class="log">
+    <h3>Match Events</h3>
+    <div id="log"></div>
+</div>
+
 </div>
 
 <script>
 let homeScore = 0;
 let awayScore = 0;
 
-function addGoal(team) {
-    if (team === 'home') {
-        homeScore++;
-        document.getElementById('homeScore').innerText = homeScore;
-    } else {
-        awayScore++;
-        document.getElementById('awayScore').innerText = awayScore;
-    }
-}
-
 let seconds = 0;
 let timerInterval = null;
+let currentHalf = 1;
 
+// ✅ FIXED: correct half-aware logic
 function formatTime(sec) {
     let minutes = Math.floor(sec / 60);
     let secs = sec % 60;
 
-    // First half added time
-    if (minutes >= 45 && minutes < 90) {
-        return "45 + " + (minutes - 45 + 1);
+    // FIRST HALF LOGIC
+    if (currentHalf === 1) {
+        if (minutes > 45) {
+            return "45 + " + (minutes - 45);
+        }
     }
 
-    // Second half added time
-    if (minutes >= 90) {
-        return "90 + " + (minutes - 90 + 1);
+    // SECOND HALF LOGIC
+    if (currentHalf === 2) {
+        if (minutes > 90) {
+            return "90 + " + (minutes - 90);
+        }
     }
 
     return String(minutes).padStart(2, '0') + ":" + String(secs).padStart(2, '0');
 }
 
+// Timer update
 function updateTimer() {
     seconds++;
     document.getElementById('timer').innerText = formatTime(seconds);
 }
 
+// Controls
 function startTimer() {
     if (!timerInterval) {
         timerInterval = setInterval(updateTimer, 1000);
@@ -115,16 +222,73 @@ function stopTimer() {
     timerInterval = null;
 }
 
-function resetTimer() {
+// Reset whole match
+function resetMatch() {
     stopTimer();
     seconds = 0;
+    homeScore = 0;
+    awayScore = 0;
+    currentHalf = 1;
+
     document.getElementById('timer').innerText = "00:00";
+    document.getElementById('homeScore').innerText = "0";
+    document.getElementById('awayScore').innerText = "0";
+    document.getElementById('halfDisplay').innerText = "1st Half";
+    document.getElementById('log').innerHTML = "";
 }
 
-function secondHalf() {
+// Start second half
+function startSecondHalf() {
     stopTimer();
-    seconds = 45 * 60; // start from 45:00
+    seconds = 45 * 60;
+    currentHalf = 2;
+
     document.getElementById('timer').innerText = "45:00";
+    document.getElementById('halfDisplay').innerText = "2nd Half";
+}
+
+// Add goal + log it
+function addGoal(team) {
+    let time = formatTime(seconds);
+
+    let homeName = document.getElementById('homeName').value;
+    let awayName = document.getElementById('awayName').value;
+
+    let logText = "";
+
+    if (team === 'home') {
+        homeScore++;
+        document.getElementById('homeScore').innerText = homeScore;
+        logText = `${homeName} scored (${time})`;
+    } else {
+        awayScore++;
+        document.getElementById('awayScore').innerText = awayScore;
+        logText = `${awayName} scored (${time})`;
+    }
+
+    let entry = document.createElement("div");
+    entry.className = "log-entry";
+    entry.innerText = logText;
+
+    document.getElementById('log').appendChild(entry);
+}
+
+// Add custom event
+function addCustomEvent() {
+    let input = document.getElementById('customEvent');
+    let text = input.value.trim();
+
+    if (text === "") return;
+
+    let time = formatTime(seconds);
+
+    let entry = document.createElement("div");
+    entry.className = "log-entry";
+    entry.innerText = `${text} (${time})`;
+
+    document.getElementById('log').appendChild(entry);
+
+    input.value = "";
 }
 </script>
 
