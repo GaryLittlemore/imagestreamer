@@ -162,7 +162,6 @@ button:active {
     <button onclick="startSecondHalf()">2nd Half</button>
 </div>
 
-<!-- ✅ NEW: Custom event input -->
 <div style="margin-top: 10px;">
     <input id="customEvent" placeholder="Enter match event..." style="width: 65%;">
     <button onclick="addCustomEvent()" style="width: 30%;">Add</button>
@@ -183,17 +182,17 @@ let seconds = 0;
 let timerInterval = null;
 let currentHalf = 1;
 
-// Format time (handles added time)
+// ✅ FIXED formatTime
 function formatTime(sec) {
     let minutes = Math.floor(sec / 60);
     let secs = sec % 60;
 
-    if (minutes >= 45 && minutes < 90) {
-        return "45 + " + (minutes - 45 + 1);
+    if (minutes > 45 && minutes < 90) {
+        return "45 + " + (minutes - 45);
     }
 
-    if (minutes >= 90) {
-        return "90 + " + (minutes - 90 + 1);
+    if (minutes > 90) {
+        return "90 + " + (minutes - 90);
     }
 
     return String(minutes).padStart(2, '0') + ":" + String(secs).padStart(2, '0');
@@ -268,7 +267,7 @@ function addGoal(team) {
     document.getElementById('log').appendChild(entry);
 }
 
-// ✅ NEW: Add custom event
+// Add custom event
 function addCustomEvent() {
     let input = document.getElementById('customEvent');
     let text = input.value.trim();
