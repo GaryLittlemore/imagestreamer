@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Football Scoreboard</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #0b1f3a;
+        color: white;
+        text-align: center;
+        padding: 30px;
+    }
+
+    .scoreboard {
+        font-size: 40px;
+        margin: 20px 0;
+    }
+
+    input {
+        font-size: 20px;
+        padding: 5px;
+        width: 200px;
+        text-align: center;
+    }
+
+    button {
+        font-size: 18px;
+        margin: 5px;
+        padding: 10px 15px;
+        cursor: pointer;
+    }
+
+    .timer {
+        font-size: 50px;
+        margin-top: 20px;
+    }
+</style>
+</head>
+<body>
+
+<h1>⚽ Football Scoreboard</h1>
+
+<div>
+    <input id="homeName" value="Home">
+    <span class="scoreboard" id="homeScore">0</span>
+
+    vs
+
+    <span class="scoreboard" id="awayScore">0</span>
+    <input id="awayName" value="Away">
+</div>
+
+<div>
+    <button onclick="addGoal('home')">Home Goal</button>
+    <button onclick="addGoal('away')">Away Goal</button>
+</div>
+
+<div class="timer" id="timer">00:00</div>
+
+<div>
+    <button onclick="startTimer()">Start</button>
+    <button onclick="stopTimer()">Stop</button>
+    <button onclick="resetTimer()">Reset</button>
+    <button onclick="secondHalf()">2nd Half</button>
+</div>
+
+<script>
+let homeScore = 0;
+let awayScore = 0;
+
+function addGoal(team) {
+    if (team === 'home') {
+        homeScore++;
+        document.getElementById('homeScore').innerText = homeScore;
+    } else {
+        awayScore++;
+        document.getElementById('awayScore').innerText = awayScore;
+    }
+}
+
+let seconds = 0;
+let timerInterval = null;
+
+function formatTime(sec) {
+    let minutes = Math.floor(sec / 60);
+    let secs = sec % 60;
+
+    // First half added time
+    if (minutes >= 45 && minutes < 90) {
+        return "45 + " + (minutes - 45 + 1);
+    }
+
+    // Second half added time
+    if (minutes >= 90) {
+        return "90 + " + (minutes - 90 + 1);
+    }
+
+    return String(minutes).padStart(2, '0') + ":" + String(secs).padStart(2, '0');
+}
+
+function updateTimer() {
+    seconds++;
+    document.getElementById('timer').innerText = formatTime(seconds);
+}
+
+function startTimer() {
+    if (!timerInterval) {
+        timerInterval = setInterval(updateTimer, 1000);
+    }
+}
+
+function stopTimer() {
+    clearInterval(timerInterval);
+    timerInterval = null;
+}
+
+function resetTimer() {
+    stopTimer();
+    seconds = 0;
+    document.getElementById('timer').innerText = "00:00";
+}
+
+function secondHalf() {
+    stopTimer();
+    seconds = 45 * 60; // start from 45:00
+    document.getElementById('timer').innerText = "45:00";
+}
+</script>
+
+</body>
+</html>
