@@ -154,10 +154,15 @@ button:active {
     <button onclick="removeGoal('home')">Home -1</button>
     <button onclick="removeGoal('away')">Away -1</button>
 
-    <!-- ✅ Icons only (no text) -->
-    <button style="width:30%" onclick="addCard('YC')">🟨</button>
-    <button style="width:30%" onclick="addCard('RC')">🟥</button>
-    <button style="width:30%" onclick="addSub()">🔁</button>
+    <!-- HOME EVENTS -->
+    <button style="width:30%" onclick="addEvent('home','🟨')">🟨 H</button>
+    <button style="width:30%" onclick="addEvent('home','🟥')">🟥 H</button>
+    <button style="width:30%" onclick="addEvent('home','🔁')">🔁 H</button>
+
+    <!-- AWAY EVENTS -->
+    <button style="width:30%" onclick="addEvent('away','🟨')">🟨 A</button>
+    <button style="width:30%" onclick="addEvent('away','🟥')">🟥 A</button>
+    <button style="width:30%" onclick="addEvent('away','🔁')">🔁 A</button>
 </div>
 
 <div class="timer" id="timer">00:00</div>
@@ -182,8 +187,6 @@ button:active {
 </div>
 
 <script>
-// (UNCHANGED JS — kept exactly as before)
-
 let homeScore = 0;
 let awayScore = 0;
 
@@ -262,9 +265,12 @@ function startSecondHalf() {
     document.getElementById('halfDisplay').innerText = "2nd Half";
 }
 
+function getCurrentTime() {
+    return Math.floor((elapsed + (startTime ? Date.now() - startTime : 0)) / 1000);
+}
+
 function addGoal(team) {
-    let totalSeconds = Math.floor((elapsed + (startTime ? Date.now() - startTime : 0)) / 1000);
-    let time = formatTime(totalSeconds);
+    let time = formatTime(getCurrentTime());
 
     let homeName = document.getElementById('homeName').value;
     let awayName = document.getElementById('awayName').value;
@@ -300,24 +306,17 @@ function removeGoal(team) {
     }
 }
 
-function addCard(type) {
-    let totalSeconds = Math.floor((elapsed + (startTime ? Date.now() - startTime : 0)) / 1000);
-    let time = formatTime(totalSeconds);
+// ✅ NEW unified event logger
+function addEvent(team, icon) {
+    let time = formatTime(getCurrentTime());
+
+    let name = team === 'home'
+        ? document.getElementById('homeName').value
+        : document.getElementById('awayName').value;
 
     let entry = document.createElement("div");
     entry.className = "log-entry";
-    entry.innerText = `${type} (${time})`;
-
-    document.getElementById('log').appendChild(entry);
-}
-
-function addSub() {
-    let totalSeconds = Math.floor((elapsed + (startTime ? Date.now() - startTime : 0)) / 1000);
-    let time = formatTime(totalSeconds);
-
-    let entry = document.createElement("div");
-    entry.className = "log-entry";
-    entry.innerText = `Substitution (${time})`;
+    entry.innerText = `${name} ${icon} (${time})`;
 
     document.getElementById('log').appendChild(entry);
 }
@@ -327,8 +326,7 @@ function addCustomEvent() {
     let text = input.value.trim();
     if (text === "") return;
 
-    let totalSeconds = Math.floor((elapsed + (startTime ? Date.now() - startTime : 0)) / 1000);
-    let time = formatTime(totalSeconds);
+    let time = formatTime(getCurrentTime());
 
     let entry = document.createElement("div");
     entry.className = "log-entry";
