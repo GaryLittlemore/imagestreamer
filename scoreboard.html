@@ -151,6 +151,9 @@ button:active {
 <div class="buttons">
     <button onclick="addGoal('home')">Home Goal</button>
     <button onclick="addGoal('away')">Away Goal</button>
+    <!-- ✅ NEW minus buttons -->
+    <button onclick="removeGoal('home')">Home -1</button>
+    <button onclick="removeGoal('away')">Away -1</button>
 </div>
 
 <div class="timer" id="timer">00:00</div>
@@ -168,7 +171,7 @@ button:active {
 </div>
 
 <div class="log">
-    <h3>Match Event Log</h3>
+    <h3>Match Events</h3>
     <div id="log"></div>
 </div>
 
@@ -182,19 +185,17 @@ let seconds = 0;
 let timerInterval = null;
 let currentHalf = 1;
 
-// ✅ FIXED: correct half-aware logic
+// formatTime (unchanged working version)
 function formatTime(sec) {
     let minutes = Math.floor(sec / 60);
     let secs = sec % 60;
 
-    // FIRST HALF LOGIC
     if (currentHalf === 1) {
         if (minutes > 45) {
             return "45 + " + (minutes - 45);
         }
     }
 
-    // SECOND HALF LOGIC
     if (currentHalf === 2) {
         if (minutes > 90) {
             return "90 + " + (minutes - 90);
@@ -247,7 +248,7 @@ function startSecondHalf() {
     document.getElementById('halfDisplay').innerText = "2nd Half";
 }
 
-// Add goal + log it
+// Add goal
 function addGoal(team) {
     let time = formatTime(seconds);
 
@@ -271,6 +272,19 @@ function addGoal(team) {
     entry.innerText = logText;
 
     document.getElementById('log').appendChild(entry);
+}
+
+// ✅ NEW: Remove goal safely
+function removeGoal(team) {
+    if (team === 'home' && homeScore > 0) {
+        homeScore--;
+        document.getElementById('homeScore').innerText = homeScore;
+    }
+
+    if (team === 'away' && awayScore > 0) {
+        awayScore--;
+        document.getElementById('awayScore').innerText = awayScore;
+    }
 }
 
 // Add custom event
