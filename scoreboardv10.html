@@ -154,15 +154,15 @@ button:active {
     <button onclick="removeGoal('home')">Home -1</button>
     <button onclick="removeGoal('away')">Away -1</button>
 
-    <!-- HOME EVENTS -->
-    <button style="width:30%" onclick="addEvent('home','🟨')">🟨 H</button>
-    <button style="width:30%" onclick="addEvent('home','🟥')">🟥 H</button>
-    <button style="width:30%" onclick="addEvent('home','🔁')">🔁 H</button>
+    <!-- ✅ FIXED LAYOUT -->
+    <button onclick="addEvent('home','🟨')">🟨</button>
+    <button onclick="addEvent('away','🟨')">🟨</button>
 
-    <!-- AWAY EVENTS -->
-    <button style="width:30%" onclick="addEvent('away','🟨')">🟨 A</button>
-    <button style="width:30%" onclick="addEvent('away','🟥')">🟥 A</button>
-    <button style="width:30%" onclick="addEvent('away','🔁')">🔁 A</button>
+    <button onclick="addEvent('home','🟥')">🟥</button>
+    <button onclick="addEvent('away','🟥')">🟥</button>
+
+    <button onclick="addEvent('home','🔁')">🔁</button>
+    <button onclick="addEvent('away','🔁')">🔁</button>
 </div>
 
 <div class="timer" id="timer">00:00</div>
@@ -306,7 +306,6 @@ function removeGoal(team) {
     }
 }
 
-// ✅ NEW unified event logger
 function addEvent(team, icon) {
     let time = formatTime(getCurrentTime());
 
