@@ -51,8 +51,6 @@ input {
 
 .buttons {
     margin: 15px 0;
-
-    /* ✅ NEW: force clean 2-column layout */
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
@@ -61,7 +59,7 @@ input {
 button {
     font-size: 18px;
     padding: 12px;
-    width: 100%; /* ✅ ensures perfect fit in grid */
+    width: 100%;
     border: none;
     border-radius: 8px;
     background: #1e90ff;
@@ -82,14 +80,15 @@ button:active {
     margin-bottom: 10px;
 }
 
+/* ✅ FIXED controls spacing */
 .controls {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
 }
 
 .controls button {
-    width: 48%;
+    width: 100%;
 }
 
 .log {
@@ -127,10 +126,6 @@ button:active {
 
     .controls button {
         width: auto;
-    }
-
-    .buttons {
-        grid-template-columns: 1fr 1fr; /* stays consistent */
     }
 }
 </style>
@@ -187,14 +182,13 @@ button:active {
 </div>
 
 <div class="log">
-    <h3>Match Events Log</h3>
+    <h3>Match Events</h3>
     <div id="log"></div>
 </div>
 
 </div>
 
 <script>
-// (JS unchanged — exactly as your working version)
 let homeScore = 0;
 let awayScore = 0;
 
@@ -215,8 +209,10 @@ function formatTime(sec) {
 
 function updateTimer() {
     if (!startTime) return;
+
     let now = Date.now();
     let totalSeconds = Math.floor((now - startTime + elapsed) / 1000);
+
     document.getElementById('timer').innerText = formatTime(totalSeconds);
 }
 
