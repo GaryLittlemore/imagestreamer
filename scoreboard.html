@@ -80,7 +80,6 @@ button:active {
     margin-bottom: 10px;
 }
 
-/* ✅ FIXED controls spacing */
 .controls {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -307,16 +306,15 @@ function addEvent(team, icon) {
     document.getElementById('log').appendChild(entry);
 }
 
+/* ✅ UPDATED: no timestamp */
 function addCustomEvent() {
     let input = document.getElementById('customEvent');
     let text = input.value.trim();
     if (!text) return;
 
-    let time = formatTime(getCurrentTime());
-
     let entry = document.createElement("div");
     entry.className = "log-entry";
-    entry.innerText = `${text} (${time})`;
+    entry.innerText = text;
 
     document.getElementById('log').appendChild(entry);
     input.value = "";
