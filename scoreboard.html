@@ -51,13 +51,15 @@ input {
 
 .buttons {
     margin: 15px 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
 }
 
 button {
     font-size: 18px;
     padding: 12px;
-    margin: 5px;
-    width: 45%;
+    width: 100%;
     border: none;
     border-radius: 8px;
     background: #1e90ff;
@@ -78,14 +80,15 @@ button:active {
     margin-bottom: 10px;
 }
 
+/* ✅ FIXED controls spacing */
 .controls {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
 }
 
 .controls button {
-    width: 48%;
+    width: 100%;
 }
 
 .log {
@@ -151,9 +154,17 @@ button:active {
 <div class="buttons">
     <button onclick="addGoal('home')">Home Goal</button>
     <button onclick="addGoal('away')">Away Goal</button>
-    <!-- ✅ NEW minus buttons -->
     <button onclick="removeGoal('home')">Home -1</button>
     <button onclick="removeGoal('away')">Away -1</button>
+
+    <button onclick="addEvent('home','🟨')">🟨</button>
+    <button onclick="addEvent('away','🟨')">🟨</button>
+
+    <button onclick="addEvent('home','🟥')">🟥</button>
+    <button onclick="addEvent('away','🟥')">🟥</button>
+
+    <button onclick="addEvent('home','🔁')">🔁</button>
+    <button onclick="addEvent('away','🔁')">🔁</button>
 </div>
 
 <div class="timer" id="timer">00:00</div>
@@ -181,52 +192,51 @@ button:active {
 let homeScore = 0;
 let awayScore = 0;
 
-let seconds = 0;
+let startTime = null;
+let elapsed = 0;
 let timerInterval = null;
 let currentHalf = 1;
 
-// formatTime (unchanged working version)
 function formatTime(sec) {
     let minutes = Math.floor(sec / 60);
     let secs = sec % 60;
 
-    if (currentHalf === 1) {
-        if (minutes > 45) {
-            return "45 + " + (minutes - 45);
-        }
-    }
-
-    if (currentHalf === 2) {
-        if (minutes > 90) {
-            return "90 + " + (minutes - 90);
-        }
-    }
+    if (currentHalf === 1 && minutes > 45) return "45 + " + (minutes - 45);
+    if (currentHalf === 2 && minutes > 90) return "90 + " + (minutes - 90);
 
     return String(minutes).padStart(2, '0') + ":" + String(secs).padStart(2, '0');
 }
 
-// Timer update
 function updateTimer() {
-    seconds++;
-    document.getElementById('timer').innerText = formatTime(seconds);
+    if (!startTime) return;
+
+    let now = Date.now();
+    let totalSeconds = Math.floor((now - startTime + elapsed) / 1000);
+
+    document.getElementById('timer').innerText = formatTime(totalSeconds);
 }
 
-// Controls
 function startTimer() {
     if (!timerInterval) {
+        startTime = Date.now();
         timerInterval = setInterval(updateTimer, 1000);
     }
 }
 
 function stopTimer() {
-    clearInterval(timerInterval);
-    timerInterval = null;
+    if (timerInterval) {
+        let now = Date.now();
+        elapsed += (now - startTime);
+        clearInterval(timerInterval);
+        timerInterval = null;
+        startTime = null;
+    }
 }
 
-// Reset whole match
 function resetMatch() {
     stopTimer();
-    seconds = 0;
+    elapsed = 0;
+    startTime = null;
     homeScore = 0;
     awayScore = 0;
     currentHalf = 1;
@@ -238,70 +248,77 @@ function resetMatch() {
     document.getElementById('log').innerHTML = "";
 }
 
-// Start second half
 function startSecondHalf() {
     stopTimer();
-    seconds = 45 * 60;
+    elapsed = 45 * 60 * 1000;
+    startTime = null;
     currentHalf = 2;
 
     document.getElementById('timer').innerText = "45:00";
     document.getElementById('halfDisplay').innerText = "2nd Half";
 }
 
-// Add goal
+function getCurrentTime() {
+    return Math.floor((elapsed + (startTime ? Date.now() - startTime : 0)) / 1000);
+}
+
 function addGoal(team) {
-    let time = formatTime(seconds);
-
-    let homeName = document.getElementById('homeName').value;
-    let awayName = document.getElementById('awayName').value;
-
-    let logText = "";
+    let time = formatTime(getCurrentTime());
+    let name = team === 'home'
+        ? document.getElementById('homeName').value
+        : document.getElementById('awayName').value;
 
     if (team === 'home') {
         homeScore++;
         document.getElementById('homeScore').innerText = homeScore;
-        logText = `${homeName} scored (${time})`;
     } else {
         awayScore++;
         document.getElementById('awayScore').innerText = awayScore;
-        logText = `${awayName} scored (${time})`;
     }
 
     let entry = document.createElement("div");
     entry.className = "log-entry";
-    entry.innerText = logText;
+    entry.innerText = `${name} scored (${time})`;
 
     document.getElementById('log').appendChild(entry);
 }
 
-// ✅ NEW: Remove goal safely
 function removeGoal(team) {
     if (team === 'home' && homeScore > 0) {
         homeScore--;
         document.getElementById('homeScore').innerText = homeScore;
     }
-
     if (team === 'away' && awayScore > 0) {
         awayScore--;
         document.getElementById('awayScore').innerText = awayScore;
     }
 }
 
-// Add custom event
+function addEvent(team, icon) {
+    let time = formatTime(getCurrentTime());
+    let name = team === 'home'
+        ? document.getElementById('homeName').value
+        : document.getElementById('awayName').value;
+
+    let entry = document.createElement("div");
+    entry.className = "log-entry";
+    entry.innerText = `${name} ${icon} (${time})`;
+
+    document.getElementById('log').appendChild(entry);
+}
+
 function addCustomEvent() {
     let input = document.getElementById('customEvent');
     let text = input.value.trim();
+    if (!text) return;
 
-    if (text === "") return;
-
-    let time = formatTime(seconds);
+    let time = formatTime(getCurrentTime());
 
     let entry = document.createElement("div");
     entry.className = "log-entry";
     entry.innerText = `${text} (${time})`;
 
     document.getElementById('log').appendChild(entry);
-
     input.value = "";
 }
 </script>
