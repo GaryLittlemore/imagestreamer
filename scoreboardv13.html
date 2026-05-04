@@ -181,7 +181,7 @@ button:active {
 </div>
 
 <div class="log">
-    <h3>Match Events Log</h3>
+    <h3>Match Events</h3>
     <div id="log"></div>
 </div>
 
@@ -196,29 +196,33 @@ let elapsed = 0;
 let timerInterval = null;
 let currentHalf = 1;
 
-/* ✅ UPDATED TIMER LOGIC */
+/* ✅ FINAL TIMER LOGIC */
 function formatTime(sec) {
     let minutes = Math.floor(sec / 60);
     let secs = sec % 60;
 
+    // FIRST HALF
     if (currentHalf === 1) {
         if (minutes < 45) {
             return String(minutes).padStart(2, '0') + ":" + String(secs).padStart(2, '0');
         }
         if (minutes === 45) {
-            return "45:00";
+            if (secs === 0) return "45:00";
+            let added = Math.floor((sec - 45 * 60) / 60) + 1;
+            return "45:00 +" + added;
         }
-        return "+" + (minutes - 45);
     }
 
+    // SECOND HALF
     if (currentHalf === 2) {
         if (minutes < 90) {
             return String(minutes).padStart(2, '0') + ":" + String(secs).padStart(2, '0');
         }
         if (minutes === 90) {
-            return "90:00";
+            if (secs === 0) return "90:00";
+            let added = Math.floor((sec - 90 * 60) / 60) + 1;
+            return "90:00 +" + added;
         }
-        return "+" + (minutes - 90);
     }
 }
 
