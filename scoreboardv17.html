@@ -118,12 +118,6 @@ button:active { background: #0f5ec7; }
 
 <div class="half" id="halfDisplay">1st Half</div>
 
-<!-- ✅ NEW INPUTS -->
-<div style="margin:10px 0;">
-    <input id="competition" placeholder="Competition" style="width:45%;">
-    <input id="venue" placeholder="Venue" style="width:45%;">
-</div>
-
 <div class="teams">
     <div class="team">
         <input id="homeName" value="Home">
@@ -161,13 +155,19 @@ button:active { background: #0f5ec7; }
     <button onclick="startSecondHalf()">2nd Half</button>
 </div>
 
-<div style="margin-top:10px;">
-    <button onclick="exportPDF()">Export PDF</button>
-</div>
-
 <div style="margin-top: 10px;">
     <input id="customEvent" placeholder="Enter match event..." style="width: 65%;">
     <button onclick="addCustomEvent()" style="width: 30%;">Add</button>
+</div>
+
+<!-- ✅ MOVED HERE -->
+<div style="margin:10px 0;">
+    <input id="competition" placeholder="Competition" style="width:45%;">
+    <input id="venue" placeholder="Venue" style="width:45%;">
+</div>
+
+<div style="margin-top:10px;">
+    <button onclick="exportPDF()">Export PDF</button>
 </div>
 
 <div class="log">
@@ -272,7 +272,6 @@ function addCustomEvent(){
     }
 }
 
-/* PDF */
 function exportPDF(){
     const { jsPDF } = window.jspdf;
     const doc=new jsPDF();
