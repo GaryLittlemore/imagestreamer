@@ -160,7 +160,6 @@ button:active { background: #0f5ec7; }
     <button onclick="addCustomEvent()" style="width: 30%;">Add</button>
 </div>
 
-<!-- ✅ MOVED HERE -->
 <div style="margin:10px 0;">
     <input id="competition" placeholder="Competition" style="width:45%;">
     <input id="venue" placeholder="Venue" style="width:45%;">
@@ -181,6 +180,16 @@ button:active { background: #0f5ec7; }
 let homeScore = 0, awayScore = 0;
 let startTime = null, elapsed = 0, timerInterval = null, currentHalf = 1;
 
+/* ✅ FIXED ELEMENT REFERENCES */
+const homeScoreEl = document.getElementById('homeScore');
+const awayScoreEl = document.getElementById('awayScore');
+const timerEl = document.getElementById('timer');
+const logEl = document.getElementById('log');
+const homeNameEl = document.getElementById('homeName');
+const awayNameEl = document.getElementById('awayName');
+const halfDisplayEl = document.getElementById('halfDisplay');
+const customEventEl = document.getElementById('customEvent');
+
 function formatTime(sec){
     let m=Math.floor(sec/60), s=sec%60;
     if(currentHalf===1){
@@ -198,7 +207,7 @@ function formatTime(sec){
 function updateTimer(){
     if(!startTime) return;
     let sec=Math.floor((Date.now()-startTime+elapsed)/1000);
-    timer.innerText=formatTime(sec);
+    timerEl.innerText=formatTime(sec);
 }
 
 function startTimer(){
@@ -220,19 +229,19 @@ function stopTimer(){
 function resetMatch(){
     stopTimer();
     elapsed=0;homeScore=0;awayScore=0;currentHalf=1;
-    timer.innerText="00:00";
+    timerEl.innerText="00:00";
     homeScoreEl.innerText=0;
     awayScoreEl.innerText=0;
-    halfDisplay.innerText="1st Half";
-    log.innerHTML="";
+    halfDisplayEl.innerText="1st Half";
+    logEl.innerHTML="";
 }
 
 function startSecondHalf(){
     stopTimer();
     elapsed=2700000;
     currentHalf=2;
-    timer.innerText="45:00";
-    halfDisplay.innerText="2nd Half";
+    timerEl.innerText="45:00";
+    halfDisplayEl.innerText="2nd Half";
 }
 
 function getCurrentTime(){
@@ -243,12 +252,12 @@ function addLog(t){
     let d=document.createElement("div");
     d.className="log-entry";
     d.innerText=t;
-    log.appendChild(d);
+    logEl.appendChild(d);
 }
 
 function addGoal(t){
     let time=formatTime(getCurrentTime());
-    let name=t==='home'?homeName.value:awayName.value;
+    let name=t==='home'?homeNameEl.value:awayNameEl.value;
     if(t==='home'){homeScore++;homeScoreEl.innerText=homeScore;}
     else{awayScore++;awayScoreEl.innerText=awayScore;}
     addLog(`${name} scored (${time})`);
@@ -261,14 +270,14 @@ function removeGoal(t){
 
 function addEvent(t,i){
     let time=formatTime(getCurrentTime());
-    let name=t==='home'?homeName.value:awayName.value;
+    let name=t==='home'?homeNameEl.value:awayNameEl.value;
     addLog(`${name} ${i} (${time})`);
 }
 
 function addCustomEvent(){
-    if(customEvent.value.trim()){
-        addLog(customEvent.value);
-        customEvent.value="";
+    if(customEventEl.value.trim()){
+        addLog(customEventEl.value);
+        customEventEl.value="";
     }
 }
 
@@ -276,7 +285,7 @@ function exportPDF(){
     const { jsPDF } = window.jspdf;
     const doc=new jsPDF();
 
-    let home=homeName.value, away=awayName.value;
+    let home=homeNameEl.value, away=awayNameEl.value;
     let comp=document.getElementById('competition').value||"-";
     let venue=document.getElementById('venue').value||"-";
 
