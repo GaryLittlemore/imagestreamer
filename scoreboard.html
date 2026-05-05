@@ -196,14 +196,38 @@ let elapsed = 0;
 let timerInterval = null;
 let currentHalf = 1;
 
+/* ✅ FIXED TIMER */
 function formatTime(sec) {
     let minutes = Math.floor(sec / 60);
     let secs = sec % 60;
 
-    if (currentHalf === 1 && minutes > 45) return "45 + " + (minutes - 45);
-    if (currentHalf === 2 && minutes > 90) return "90 + " + (minutes - 90);
+    if (currentHalf === 1) {
+        if (minutes < 45) {
+            return String(minutes).padStart(2, '0') + ":" + String(secs).padStart(2, '0');
+        }
 
-    return String(minutes).padStart(2, '0') + ":" + String(secs).padStart(2, '0');
+        if (sec === 45 * 60) {
+            return "45:00";
+        }
+
+        let added = Math.floor((sec - 45 * 60) / 60) + 1;
+        return "45:00 +" + added;
+    }
+
+    if (currentHalf === 2) {
+        if (minutes < 90) {
+            return String(minutes).padStart(2, '0') + ":" + String(secs).padStart(2, '0');
+        }
+
+        if (sec === 90 * 60) {
+            return "90:00";
+        }
+
+        let added = Math.floor((sec - 90 * 60) / 60) + 1;
+        return "90:00 +" + added;
+    }
+
+    return "00:00";
 }
 
 function updateTimer() {
@@ -306,7 +330,6 @@ function addEvent(team, icon) {
     document.getElementById('log').appendChild(entry);
 }
 
-/* ✅ UPDATED: no timestamp */
 function addCustomEvent() {
     let input = document.getElementById('customEvent');
     let text = input.value.trim();
