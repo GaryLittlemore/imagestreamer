@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Fast Cached Image Selector</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Selector</title>
 
   <style>
     * {
@@ -57,12 +57,6 @@
     .stopped {
       background: #d50000 !important;
     }
-
-    .status {
-      color: white;
-      margin-top: 15px;
-      font-size: 16px;
-    }
   </style>
 </head>
 <body>
@@ -70,12 +64,7 @@
 <div class="container">
   <img id="slideshow" src="" alt="Image Selector">
   <br>
-
   <button id="toggleButton">STOP</button>
-
-  <div class="status">
-    Speed: <span id="speedDisplay">50</span> ms
-  </div>
 </div>
 
 <script>
@@ -83,17 +72,16 @@
   // SETTINGS
   // =========================
 
-  // Change image speed here (milliseconds)
+  // Change speed here (milliseconds)
   let speed = 50;
 
-  // Image list
+  // Add your images here
   const images = [
-    "images/img1.png",
-    "images/img2.png",
-    "images/img3.png",
-    "images/img4.png",
-    "images/img5.png",
-    "images/img6.png"
+    "images/photo1.jpg",
+    "images/photo2.jpg",
+    "images/photo3.jpg",
+    "images/photo4.jpg",
+    "images/photo5.jpg"
   ];
 
   // =========================
@@ -102,33 +90,26 @@
 
   const imageElement = document.getElementById("slideshow");
   const button = document.getElementById("toggleButton");
-  const speedDisplay = document.getElementById("speedDisplay");
-
-  speedDisplay.textContent = speed;
 
   // =========================
-  // CACHE / PRELOAD IMAGES
+  // PRELOAD / CACHE IMAGES
   // =========================
 
   const cachedImages = [];
 
   function preloadImages() {
-    let loaded = 0;
-
     images.forEach((src, index) => {
       const img = new Image();
 
       img.src = src;
 
       img.onload = () => {
-        loaded++;
+        console.log("Loaded:", src);
 
-        // Start once first image loads
-        if (loaded === 1) {
+        // Set first loaded image
+        if (index === 0) {
           imageElement.src = src;
         }
-
-        console.log(`Loaded: ${src}`);
       };
 
       cachedImages[index] = img;
@@ -143,26 +124,23 @@
 
   let currentIndex = 0;
   let running = true;
-  let interval;
 
-  function startSlideshow() {
-    interval = setInterval(() => {
-      if (running) {
-        currentIndex = (currentIndex + 1) % images.length;
+  setInterval(() => {
+    if (!running) return;
 
-        // Instant swap from cache
-        imageElement.src = cachedImages[currentIndex].src;
-      }
-    }, speed);
-  }
+    currentIndex = (currentIndex + 1) % images.length;
 
-  startSlideshow();
+    // Instant cached image swap
+    imageElement.src = cachedImages[currentIndex].src;
+
+  }, speed);
 
   // =========================
-  // BUTTON
+  // BUTTON CONTROL
   // =========================
 
   button.addEventListener("click", () => {
+
     running = !running;
 
     if (running) {
@@ -172,6 +150,7 @@
       button.textContent = "START";
       button.classList.add("stopped");
     }
+
   });
 
   // =========================
@@ -179,10 +158,12 @@
   // =========================
 
   document.addEventListener("keydown", (event) => {
+
     if (event.code === "Space") {
       event.preventDefault();
       button.click();
     }
+
   });
 
 </script>
