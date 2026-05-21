@@ -26,6 +26,14 @@
       text-align: center;
     }
 
+    h1 {
+      color: white;
+      margin-bottom: 20px;
+      font-size: 42px;
+      letter-spacing: 2px;
+      text-shadow: 0 0 15px rgba(255,255,255,0.4);
+    }
+
     img {
       width: 550px;
       max-width: 90vw;
@@ -62,9 +70,15 @@
 <body>
 
 <div class="container">
+
+  <h1>Image Selector</h1>
+
   <img id="slideshow" src="" alt="Image Selector">
+
   <br>
+
   <button id="toggleButton">STOP</button>
+
 </div>
 
 <script>
@@ -100,20 +114,23 @@
 
   function preloadImages() {
     images.forEach((src, index) => {
+
       const img = new Image();
 
       img.src = src;
 
       img.onload = () => {
+
         console.log("Loaded:", src);
 
-        // Set first loaded image
+        // Show first image when ready
         if (index === 0) {
           imageElement.src = src;
         }
       };
 
       cachedImages[index] = img;
+
     });
   }
 
@@ -127,6 +144,7 @@
   let running = true;
 
   setInterval(() => {
+
     if (!running) return;
 
     currentIndex = (currentIndex + 1) % images.length;
