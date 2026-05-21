@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fast Cached Image Selector</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      height: 100vh;
+      background: #111;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      text-align: center;
+    }
+
+    img {
+      width: 550px;
+      max-width: 90vw;
+      height: 380px;
+      object-fit: cover;
+      border-radius: 12px;
+      border: 4px solid white;
+      box-shadow: 0 0 25px rgba(255,255,255,0.25);
+      user-select: none;
+      pointer-events: none;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 15px 40px;
+      font-size: 20px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      background: #00c853;
+      color: white;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #00e676;
+    }
+
+    .stopped {
+      background: #d50000 !important;
+    }
+
+    .status {
+      color: white;
+      margin-top: 15px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <img id="slideshow" src="" alt="Image Selector">
+  <br>
+
+  <button id="toggleButton">STOP</button>
+
+  <div class="status">
+    Speed: <span id="speedDisplay">50</span> ms
+  </div>
+</div>
+
+<script>
+  // =========================
+  // SETTINGS
+  // =========================
+
+  // Change image speed here (milliseconds)
+  let speed = 50;
+
+  // Image list
+  const images = [
+    "images/photo1.jpg",
+    "images/photo2.jpg",
+    "images/photo3.jpg",
+    "images/photo4.jpg",
+    "images/photo5.jpg"
+  ];
+
+  // =========================
+  // ELEMENTS
+  // =========================
+
+  const imageElement = document.getElementById("slideshow");
+  const button = document.getElementById("toggleButton");
+  const speedDisplay = document.getElementById("speedDisplay");
+
+  speedDisplay.textContent = speed;
+
+  // =========================
+  // CACHE / PRELOAD IMAGES
+  // =========================
+
+  const cachedImages = [];
+
+  function preloadImages() {
+    let loaded = 0;
+
+    images.forEach((src, index) => {
+      const img = new Image();
+
+      img.src = src;
+
+      img.onload = () => {
+        loaded++;
+
+        // Start once first image loads
+        if (loaded === 1) {
+          imageElement.src = src;
+        }
+
+        console.log(`Loaded: ${src}`);
+      };
+
+      cachedImages[index] = img;
+    });
+  }
+
+  preloadImages();
+
+  // =========================
+  // SLIDESHOW
+  // =========================
+
+  let currentIndex = 0;
+  let running = true;
+  let interval;
+
+  function startSlideshow() {
+    interval = setInterval(() => {
+      if (running) {
+        currentIndex = (currentIndex + 1) % images.length;
+
+        // Instant swap from cache
+        imageElement.src = cachedImages[currentIndex].src;
+      }
+    }, speed);
+  }
+
+  startSlideshow();
+
+  // =========================
+  // BUTTON
+  // =========================
+
+  button.addEventListener("click", () => {
+    running = !running;
+
+    if (running) {
+      button.textContent = "STOP";
+      button.classList.remove("stopped");
+    } else {
+      button.textContent = "START";
+      button.classList.add("stopped");
+    }
+  });
+
+  // =========================
+  // SPACEBAR SUPPORT
+  // =========================
+
+  document.addEventListener("keydown", (event) => {
+    if (event.code === "Space") {
+      event.preventDefault();
+      button.click();
+    }
+  });
+
+</script>
+
+</body>
+</html>
